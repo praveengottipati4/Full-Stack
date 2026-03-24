@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>International Tech Event - Ticket Booking</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #1e723b, #5b982a);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2a5298;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #5a982a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e7239;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7ffe8;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #999999;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>International Tech Event</h1>
+    <p>Book your ticket for Global Technology Seminar 2026</p>
+
+    <label>Full Name</label>
+    <input type="text" id="name" placeholder="Enter your name">
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="Enter your email">
+
+    <label>Country</label>
+    <input type="text" id="country" placeholder="Enter your country">
+
+    <label>Ticket Type</label>
+    <select id="ticket">
+        <option value="">Select ticket type</option>
+        <option value="student">Student Pass - ₹2000</option>
+        <option value="regular">Regular Pass - ₹5000</option>
+        <option value="vip">VIP Pass - ₹10000</option>
+    </select>
+
+    <label>Number of Tickets</label>
+    <input type="number" id="count" min="1" value="1">
+
+    <button onclick="bookTicket()">Book Ticket</button>
+
+    <div class="result" id="result"></div>
+
+    <div class="footer">
+        © 2026 International Tech Event
+    </div>
+</div>
+
+<script>
+    function bookTicket() {
+        let name = document.getElementById("name").value;
+        let email = document.getElementById("email").value;
+        let country = document.getElementById("country").value;
+        let ticket = document.getElementById("ticket").value;
+        let count = document.getElementById("count").value;
+        let result = document.getElementById("result");
+
+        if (name === "" || email === "" || country === "" || ticket === "") {
+            alert("Please fill all fields");
+            return;
+        }
+
+        let price = 0;
+        if (ticket === "student") price = 2000;
+        if (ticket === "regular") price = 5000;
+        if (ticket === "vip") price = 10000;
+
+        let total = price * count;
+
+        result.style.display = "block";
+        result.innerHTML = `
+            <h3>Booking Confirmed 🎉</h3>
+            <p><b>Name:</b> ${name}</p>
+            <p><b>Email:</b> ${email}</p>
+            <p><b>Country:</b> ${country}</p>
+            <p><b>Tickets:</b> ${count}</p>
+            <p><b>Total Amount:</b> ₹${total}</p>
+        `;
+    }
+</script>
+
+</body>
+</html>
