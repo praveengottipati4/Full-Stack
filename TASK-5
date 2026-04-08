@@ -1,0 +1,119 @@
+PROGRAM:
+-- ==========================================
+-- ORDER MANAGEMENT SYSTEM (JOINS + SUBQUERY)
+-- ==========================================
+
+-- Create Database
+CREATE DATABASE IF NOT EXISTS ecommerce_db;
+USE ecommerce_db;
+
+-- ==========================================
+-- 1️⃣ CREATE TABLES
+-- ==========================================
+
+-- Customers Table
+CREATE TABLE IF NOT EXISTS customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(15)
+);
+
+-- Products Table
+CREATE TABLE IF NOT EXISTS products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL
+);
+
+-- Orders Table
+CREATE TABLE IF NOT EXISTS orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    order_date DATE,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+-- ==========================================
+-- 2️⃣ INSERT SAMPLE DATA
+-- ==========================================
+
+-- Customers
+INSERT INTO customers (customer_name, email, phone) VALUES
+('Susmitha', 'susmitha@gmail.com', '9876543210'),
+('Rahul', 'rahul@gmail.com', '9123456789'),
+('Anjali', 'anjali@gmail.com', '9012345678');
+
+-- Products
+INSERT INTO products (product_name, price) VALUES
+('Laptop', 60000),
+('Mobile', 20000),
+('Headphones', 3000);
+
+-- Orders
+INSERT INTO orders (customer_id, product_id, quantity, order_date) VALUES
+(1, 1, 1, '2026-03-01'),
+(1, 3, 2, '2026-03-02'),
+(2, 2, 1, '2026-03-02'),
+(3, 3, 3, '2026-03-03'),
+(2, 1, 1, '2026-03-04');
+
+-- ==========================================
+-- 3️⃣ CUSTOMER ORDER HISTORY (JOIN)
+-- ==========================================
+
+SELECT 
+    c.customer_name,
+    p.product_name,
+    o.quantity,
+    p.price,
+    (o.quantity * p.price) AS total_amount,
+    o.order_date
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN products p ON o.product_id = p.product_id
+ORDER BY o.order_date DESC;
+
+-- ==========================================
+-- 4️⃣ HIGHEST VALUE ORDER (SUBQUERY)
+-- ==========================================
+
+SELECT * FROM (
+    SELECT 
+        o.order_id,
+        c.customer_name,
+        (o.quantity * p.price) AS total_amount
+    FROM orders o
+    JOIN customers c ON o.customer_id = c.customer_id
+    JOIN products p ON o.product_id = p.product_id
+) AS order_totals
+WHERE total_amount = (
+    SELECT MAX(quantity * price)
+    FROM orders o
+    JOIN products p ON o.product_id = p.product_id
+);
+
+-- ==========================================
+-- 5️⃣ MOST ACTIVE CUSTOMER (SUBQUERY)
+-- ==========================================
+
+SELECT customer_name, total_orders
+FROM (
+    SELECT 
+        c.customer_name,
+        COUNT(o.order_id) AS total_orders
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_name
+) AS customer_orders
+WHERE total_orders = (
+    SELECT MAX(order_count)
+    FROM (
+        SELECT COUNT(order_id) AS order_count
+        FROM orders
+        GROUP BY customer_id
+    ) AS counts
+);
