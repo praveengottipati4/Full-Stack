@@ -1,0 +1,21 @@
+TO CREATE DATA BASE:
+CREATE DATABASE student_db;
+USE student_db;
+TO CREATE TABLE:
+CREATE TABLE students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    dob DATE NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) NOT NULL
+);
+SAMPLE DATA INSERTION:
+INSERT INTO students (name, email, dob, department, phone)
+VALUES 
+('Susmitha', 'susmitha@gmail.com', '2003-05-14', 'MCA', '9876543210'),
+('Rahul', 'rahul@gmail.com', '2002-08-20', 'CSE', '9123456789');
+RETRIVE DATA SELECT:
+SELECT * FROM students;
+
+SELECT * FROM students WHERE department = 'MCA';
