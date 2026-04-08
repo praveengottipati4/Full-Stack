@@ -1,0 +1,97 @@
+PROGRAM:
+-- ==========================================
+-- AUTOMATED LOGGING SYSTEM
+-- (TRIGGERS + VIEWS)
+-- ==========================================
+
+-- Create Database
+CREATE DATABASE IF NOT EXISTS audit_db;
+USE audit_db;
+
+-- ==========================================
+-- 1️⃣ MAIN TABLE (Example: Employees)
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS employees (
+    emp_id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_name VARCHAR(100) NOT NULL,
+    department VARCHAR(100),
+    salary DECIMAL(10,2),
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+    ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- ==========================================
+-- 2️⃣ AUDIT LOG TABLE
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS employee_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_id INT,
+    action_type VARCHAR(20),
+    action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    old_salary DECIMAL(10,2),
+    new_salary DECIMAL(10,2)
+);
+
+-- ==========================================
+-- 3️⃣ TRIGGER FOR INSERT
+-- ==========================================
+
+DELIMITER $$
+
+CREATE TRIGGER after_employee_insert
+AFTER INSERT ON employees
+FOR EACH ROW
+BEGIN
+    INSERT INTO employee_logs(emp_id, action_type, new_salary)
+    VALUES (NEW.emp_id, 'INSERT', NEW.salary);
+END $$
+
+DELIMITER ;
+
+-- ==========================================
+-- 4️⃣ TRIGGER FOR UPDATE
+-- ==========================================
+
+DELIMITER $$
+
+CREATE TRIGGER after_employee_update
+AFTER UPDATE ON employees
+FOR EACH ROW
+BEGIN
+    INSERT INTO employee_logs(emp_id, action_type, old_salary, new_salary)
+    VALUES (NEW.emp_id, 'UPDATE', OLD.salary, NEW.salary);
+END $$
+
+DELIMITER ;
+
+-- ==========================================
+-- 5️⃣ SAMPLE DATA
+-- ==========================================
+
+INSERT INTO employees (emp_name, department, salary)
+VALUES ('Susmitha', 'IT', 50000);
+
+UPDATE employees 
+SET salary = 60000
+WHERE emp_name = 'Susmitha';
+
+-- ==========================================
+-- 6️⃣ VIEW FOR DAILY ACTIVITY REPORT
+-- ==========================================
+
+CREATE OR REPLACE VIEW daily_activity_report AS
+SELECT 
+    DATE(action_time) AS activity_date,
+    action_type,
+    COUNT(*) AS total_actions
+FROM employee_logs
+GROUP BY DATE(action_time), action_type
+ORDER BY activity_date DESC;
+
+-- ==========================================
+-- 7️⃣ VIEW USAGE
+-- ==========================================
+
+SELECT * FROM daily_activity_report;
