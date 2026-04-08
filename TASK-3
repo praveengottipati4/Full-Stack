@@ -1,0 +1,44 @@
+PROGRAM:
+-- ===============================
+-- LOGIN SYSTEM DATABASE SCRIPT
+-- ===============================
+
+-- Create Database
+CREATE DATABASE IF NOT EXISTS login_db;
+USE login_db;
+
+-- Create Users Table
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert Sample Users
+-- (In real projects passwords should be hashed)
+INSERT INTO users (username, email, password) VALUES
+('admin', 'admin@gmail.com', 'admin123'),
+('susmitha', 'susmitha@gmail.com', 'mca2025'),
+('rahul', 'rahul@gmail.com', 'cse2025');
+
+-- ===============================
+-- LOGIN CHECK QUERY
+-- ===============================
+
+-- This query checks username + password
+SELECT * FROM users
+WHERE username = 'admin'
+AND password = 'admin123';
+
+-- If record exists → Login Success
+-- If no record → Invalid Login
+
+-- ===============================
+-- OPTIONAL: CHECK BY EMAIL
+-- ===============================
+
+SELECT * FROM users
+WHERE email = 'susmitha@gmail.com'
+AND password = 'mca2025';
