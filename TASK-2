@@ -1,0 +1,49 @@
+PROGRAM:
+-- ===============================
+-- STUDENT DASHBOARD SQL SCRIPT
+-- ===============================
+
+-- Create Database
+CREATE DATABASE IF NOT EXISTS student_db;
+USE student_db;
+
+-- Create Table
+CREATE TABLE IF NOT EXISTS students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    dob DATE NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) NOT NULL
+);
+
+-- Insert Sample Data
+INSERT INTO students (name, email, dob, department, phone) VALUES
+('Susmitha', 'susmitha@gmail.com', '2003-05-14', 'MCA', '9876543210'),
+('Rahul', 'rahul@gmail.com', '2002-08-20', 'CSE', '9123456789'),
+('Anjali', 'anjali@gmail.com', '2004-01-10', 'ECE', '9012345678'),
+('Kiran', 'kiran@gmail.com', '2001-12-05', 'MCA', '9988776655'),
+('Arun', 'arun@gmail.com', '2003-07-22', 'CSE', '8899001122');
+
+-- ===============================
+-- DASHBOARD QUERIES
+-- ===============================
+
+-- 1. Sort by Name (A-Z)
+SELECT * FROM students ORDER BY name ASC;
+
+-- 2. Sort by Date of Birth (Oldest to Youngest)
+SELECT * FROM students ORDER BY dob ASC;
+
+-- 3. Filter by Department (Example: MCA)
+SELECT * FROM students WHERE department = 'MCA';
+
+-- 4. Count of Students per Department
+SELECT department, COUNT(*) AS total_students
+FROM students
+GROUP BY department;
+
+-- 5. Filter + Sort Together
+SELECT * FROM students
+WHERE department = 'CSE'
+ORDER BY name ASC;
